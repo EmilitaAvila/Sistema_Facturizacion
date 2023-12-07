@@ -5,16 +5,18 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JLabel;
 
 public class MenuPrincipal extends JFrame {
-
     private static final long serialVersionUID = 1L;
     private FrmCliente frmCliente;
     private JDesktopPane desktopPane;
@@ -37,7 +39,7 @@ public class MenuPrincipal extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 803, 614);
 
-        desktopPane = new JDesktopPane(); // Debes crear el JDesktopPane
+        desktopPane = new JDesktopPane();
         desktopPane.setBackground(new Color(223, 179, 230));
         setContentPane(desktopPane);
 
@@ -68,6 +70,11 @@ public class MenuPrincipal extends JFrame {
         JMenuItem mntmNewMenuItem_5 = new JMenuItem("Lista de Clientes");
         mntmNewMenuItem_5.setBackground(new Color(255, 255, 255));
         mntmNewMenuItem_5.setFont(new Font("Tw Cen MT", Font.ITALIC, 11));
+        mntmNewMenuItem_5.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                mostrarListaClientes();
+            }
+        });
         mnNewMenu_3.add(mntmNewMenuItem_5);
 
         JMenu mnNewMenu_1 = new JMenu("Productos");
@@ -106,5 +113,22 @@ public class MenuPrincipal extends JFrame {
         lblNewLabel_2.setFont(new Font("Tw Cen MT", Font.ITALIC, 11));
         lblNewLabel_2.setIcon(new ImageIcon("C:\\Users\\Usuario\\Downloads\\icons8-twitter-64.png"));
         mnNewMenu_2.add(lblNewLabel_2);
+    }
+    private void mostrarListaClientes() {
+        FrmCliente frmCliente = obtenerFrmClienteActivo(); 
+        if (frmCliente != null) {
+            DefaultTableModel modeloTabla = frmCliente.getModeloTabla();
+            ListaCliente listaCliente = new ListaCliente(modeloTabla);
+            desktopPane.add(listaCliente);
+            listaCliente.setVisible(true);
+        }
+    }
+    private FrmCliente obtenerFrmClienteActivo() {
+        for (JInternalFrame frame : desktopPane.getAllFrames()) {
+            if (frame instanceof FrmCliente && frame.isVisible()) {
+                return (FrmCliente) frame;
+            }
+        }
+        return null;
     }
 }

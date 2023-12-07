@@ -6,13 +6,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import ec.edu.puce.SFactura.ClienteFact;
-import ec.edu.puce.SFactura.ClienteFact;
-
-
 
 public class FrmCliente extends JInternalFrame {
-
     private static final long serialVersionUID = 1L;
     private JTextField txtCedula;
     private JTextField txtNombres;
@@ -33,8 +28,7 @@ public class FrmCliente extends JInternalFrame {
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setBounds(0, 0, 540, 684);
         getContentPane().add(contentPane);
-        
-          
+
         JLabel lblNewLabel = new JLabel("Cédula");
         lblNewLabel.setFont(new Font("Tw Cen MT", Font.ITALIC, 12));
         lblNewLabel.setBounds(10, 11, 57, 29);
@@ -105,12 +99,7 @@ public class FrmCliente extends JInternalFrame {
         btnNuevo.setBackground(new Color(253, 208, 168));
         btnNuevo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                txtCedula.setText("");
-                txtNombres.setText("");
-                txtApellidos.setText("");
-                txtDireccion.setText("");
-                txtTelefono.setText("");
-                txtEmail.setText("");
+                limpiarCampos();
             }
         });
         btnNuevo.setFont(new Font("Serif", Font.BOLD, 12));
@@ -132,7 +121,11 @@ public class FrmCliente extends JInternalFrame {
         btnGuardar.setBackground(new Color(253, 208, 168));
         btnGuardar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                crearCliente();
+                if (camposValidos()) {
+                    crearCliente();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         btnGuardar.setFont(new Font("Serif", Font.BOLD, 12));
@@ -154,23 +147,17 @@ public class FrmCliente extends JInternalFrame {
     }
 
     private void crearCliente() {
-        // Crear un nuevo objeto ClienteFact
         ClienteFact cliente = new ClienteFact();
-
-        // Establecer los atributos del cliente con los valores de los campos de texto
         cliente.setCedula(txtCedula.getText());
         cliente.setNombre(txtNombres.getText());
         cliente.setApellido(txtApellidos.getText());
         cliente.setDireccion(txtDireccion.getText());
         cliente.setTelefono(txtTelefono.getText());
         cliente.setEmail(txtEmail.getText());
-
-        // Agregar el cliente a la tabla
         agregarFila(cliente);
     }
 
     private void agregarFila(ClienteFact cliente) {
-        // Agregar una fila a la tabla con los datos del cliente
         Object[] fila = new Object[]{
                 cliente.getCedula(),
                 cliente.getNombre(),
@@ -180,10 +167,9 @@ public class FrmCliente extends JInternalFrame {
                 cliente.getEmail()
         };
         model.addRow(fila);
- 
+        model.fireTableDataChanged(); 
     }
-
-
+    
     private void limpiarCampos() {
         txtCedula.setText("");
         txtNombres.setText("");
@@ -200,8 +186,13 @@ public class FrmCliente extends JInternalFrame {
                 !txtDireccion.getText().isEmpty() &&
                 !txtTelefono.getText().isEmpty() &&
                 !txtEmail.getText().isEmpty();
-    };
-	public void cerrarVentana() {
-		this.dispose();
-	}
+    }
+
+    public void cerrarVentana() {
+        this.dispose();
+    }
+
+    public DefaultTableModel getModeloTabla() {
+        return model;
+    }
 }
